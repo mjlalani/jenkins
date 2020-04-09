@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+ jenkins:
+    build:
+     context: ./dockerfile
+     dockerfile: jenkinsfile
+    image: pan/jenkins:1
+    volumes:
+       - ./jenkins_home:/var/jenkins_home/
+       - ./sonar:/opt/
+    ports:
+       - "8080:8080"
+       - "5668:5000"
+    container_name: jenkins
+    deploy:                                                     #restart: always if deploy doesn't work as its for swarm deploy mode
+      restart_policy:                                   
+        condition: on-failure                                   #One of none, on-failure or any
+        max_attempts: 5                                         #How many times to attempt to restart a container before giving up
+      resources:
+        limits:
+          memory: 3g
+        reservations:
+          memory: 1g
+    healthcheck:
+        test: curl -ISLs http://localhost:8080
+        interval: 1m
+        timeout: 10s
+        retries: 3
+        start_period: 1m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "4"
