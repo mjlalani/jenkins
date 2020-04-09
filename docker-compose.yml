@@ -7,7 +7,6 @@ services:
     image: pan/jenkins:1
     volumes:
        - ./jenkins_home:/var/jenkins_home/
-       - ./sonar:/opt/
     ports:
        - "8080:8080"
        - "5668:5000"
